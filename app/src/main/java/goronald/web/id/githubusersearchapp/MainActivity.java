@@ -61,11 +61,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    if (edtSearch.getText().toString().trim().length() == 0) {
+                    String keyword = edtSearch.getText().toString();
+                    if (keyword.trim().length() == 0) {
                         Toast.makeText(getApplicationContext(), "keyword can't be null", Toast.LENGTH_SHORT).show();
                         return false;
                     } else {
-                        sendSearchRequest(SEARCH_USER_JSON_URL + edtSearch.getText().toString());
+                        keyword = keyword.replaceAll(" ", "%20");
+                        sendSearchRequest(SEARCH_USER_JSON_URL + keyword);
                         // handle soft keyboard visibility
                         InputMethodManager imm = (InputMethodManager) getApplicationContext()
                                 .getSystemService(Context.INPUT_METHOD_SERVICE);
