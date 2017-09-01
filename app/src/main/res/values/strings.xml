@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">GithubUserSearchApp</string>
+    <string name="app_name">Github User Search</string>
     <string name="ivappbar_desc">ivAppBar</string>
     <string name="search_github_users_string">Search Github users</string>
     <string name="ivuserpicture_desc">ivUserPicture</string>
     <string name="empty_value_string">-</string>
+    <string name="user_not_found_string">User Not Found</string>
 </resources>

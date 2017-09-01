@@ -28,12 +28,12 @@ public class JSONParse {
             JSONObject jsonObject = new JSONObject(json);
 //            imgUrls = new String[jsonObject.getInt("total_count")];
 //            userNames = new String[jsonObject.getInt("total_count")];
-            Log.d("response", json);
+//            Log.d("response", json);
             users = jsonObject.getJSONArray("items");
-            Log.d("items length", String.valueOf(users.length()));
+//            Log.d("items length", String.valueOf(users.length()));
             imgUrls = new String[users.length()];
             userNames = new String[users.length()];
-            Log.d("Items", String.valueOf(users));
+//            Log.d("Items", String.valueOf(users));
             Users = new ArrayList<>();
 
             for (int i = 0; i < users.length(); i++) {

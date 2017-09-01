@@ -49,15 +49,4 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder>{
             tvUserName = (TextView) itemView.findViewById(R.id.tv_user_name);
         }
     }
-
-    public void add(int position, Data item) {
-        mDataList.add(position, item);
-        notifyItemInserted(position);
-    }
-
-    public void remove(Data item) {
-        int position = mDataList.indexOf(item);
-        mDataList.remove(position);
-        notifyItemRemoved(position);
-    }
 }

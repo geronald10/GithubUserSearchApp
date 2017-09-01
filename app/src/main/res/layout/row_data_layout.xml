@@ -22,6 +22,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="0dp"
         android:text="@string/empty_value_string"
+        android:textColor="@color/colorPrimaryText"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_user_picture"
         app:layout_constraintLeft_toRightOf="@+id/iv_user_picture"
