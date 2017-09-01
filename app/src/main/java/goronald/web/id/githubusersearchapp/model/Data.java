@@ -1,4 +1,4 @@
-package goronald.web.id.githubusersearchapp;
+package goronald.web.id.githubusersearchapp.model;
 
 public class Data {
 

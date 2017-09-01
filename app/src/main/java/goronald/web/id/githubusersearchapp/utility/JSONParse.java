@@ -1,4 +1,4 @@
-package goronald.web.id.githubusersearchapp;
+package goronald.web.id.githubusersearchapp.utility;
 
 import android.util.Log;
 
@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import goronald.web.id.githubusersearchapp.model.Data;
 
 public class JSONParse {
 
@@ -26,14 +28,9 @@ public class JSONParse {
     public void parseJSON() {
         try {
             JSONObject jsonObject = new JSONObject(json);
-//            imgUrls = new String[jsonObject.getInt("total_count")];
-//            userNames = new String[jsonObject.getInt("total_count")];
-//            Log.d("response", json);
             users = jsonObject.getJSONArray("items");
-//            Log.d("items length", String.valueOf(users.length()));
             imgUrls = new String[users.length()];
             userNames = new String[users.length()];
-//            Log.d("Items", String.valueOf(users));
             Users = new ArrayList<>();
 
             for (int i = 0; i < users.length(); i++) {
@@ -53,7 +50,7 @@ public class JSONParse {
         }
     }
 
-    List<Data> getUsers() {
+    public List<Data> getUsers() {
         return Users;
     }
 }
