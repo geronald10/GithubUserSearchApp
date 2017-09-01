@@ -1,5 +1,6 @@
 package goronald.web.id.githubusersearchapp;
 
+import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
                         return false;
                     } else {
                         sendSearchRequest(SEARCH_USER_JSON_URL + edtSearch.getText().toString());
+                        // handle soft keyboard visibility
+                        InputMethodManager imm = (InputMethodManager) getApplicationContext()
+                                .getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(edtSearch.getWindowToken(), 0);
                         return true;
                     }
                 }
