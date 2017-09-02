@@ -1,11 +1,11 @@
 package goronald.web.id.githubusersearchapp.model;
 
-public class Data {
+public class UserData {
 
     private String userImgUrl;
     private String userName;
 
-    public Data() {
+    public UserData() {
 
     }
 

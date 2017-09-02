@@ -7,9 +7,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import goronald.web.id.githubusersearchapp.model.Data;
+import goronald.web.id.githubusersearchapp.model.UserData;
 
 public class JSONParse {
 
@@ -17,7 +18,7 @@ public class JSONParse {
     public static String[] userNames;
 
     private JSONArray users = null;
-    private List<Data> Users;
+    private List<UserData> Users;
 
     private String json;
 
@@ -33,24 +34,28 @@ public class JSONParse {
             userNames = new String[users.length()];
             Users = new ArrayList<>();
 
-            for (int i = 0; i < users.length(); i++) {
-                Data data = new Data();
-                JSONObject itemJsonObject = users.getJSONObject(i);
+            if (users.length() > 0) {
+                for (int i = 0; i < users.length(); i++) {
+                    UserData data = new UserData();
+                    JSONObject itemJsonObject = users.getJSONObject(i);
 
-                userNames[i] = itemJsonObject.getString("login");
-                imgUrls[i] = itemJsonObject.getString("avatar_url");
+                    userNames[i] = itemJsonObject.getString("login");
+                    imgUrls[i] = itemJsonObject.getString("avatar_url");
 
-                data.setUserName(userNames[i]);
-                data.setUserImgUrl(imgUrls[i]);
-                Users.add(data);
-                Log.d("data Url", String.valueOf(data.getUserImgUrl()) + data.getUserName());
+                    data.setUserName(userNames[i]);
+                    data.setUserImgUrl(imgUrls[i]);
+                    Users.add(data);
+                    Log.d("data Url", String.valueOf(data.getUserImgUrl()) + data.getUserName());
+                }
+            } else {
+                Users = Collections.emptyList();
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public List<Data> getUsers() {
+    public List<UserData> getUsers() {
         return Users;
     }
 }

@@ -11,26 +11,26 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import goronald.web.id.githubusersearchapp.model.Data;
+import goronald.web.id.githubusersearchapp.model.UserData;
 import goronald.web.id.githubusersearchapp.R;
 
-public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder>{
+public class UserDataAdapter extends RecyclerView.Adapter<UserDataAdapter.ViewHolder>{
 
-    private List<Data> mDataList;
+    private List<UserData> mDataList;
 
-    public DataAdapter(List<Data> mDataList) {
+    public UserDataAdapter(List<UserData> mDataList) {
         this.mDataList = mDataList;
     }
 
     @Override
-    public DataAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public UserDataAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_data_layout,
                 parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(DataAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(UserDataAdapter.ViewHolder holder, int position) {
         Glide.with(holder.ivUserPicture.getContext()).load(mDataList.get(position).getUserImgUrl())
                 .into(holder.ivUserPicture);
         holder.tvUserName.setText(mDataList.get(position).getUserName());

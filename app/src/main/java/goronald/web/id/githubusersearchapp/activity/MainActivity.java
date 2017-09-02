@@ -1,12 +1,16 @@
 package goronald.web.id.githubusersearchapp.activity;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,21 +26,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import goronald.web.id.githubusersearchapp.R;
-import goronald.web.id.githubusersearchapp.adapter.DataAdapter;
-import goronald.web.id.githubusersearchapp.model.Data;
+import goronald.web.id.githubusersearchapp.adapter.UserDataAdapter;
+import goronald.web.id.githubusersearchapp.model.UserData;
 import goronald.web.id.githubusersearchapp.utility.EndlessRecyclerViewScrollListener;
 import goronald.web.id.githubusersearchapp.utility.JSONParse;
 import goronald.web.id.githubusersearchapp.utility.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity {
-
-    public static final String SEARCH_USER_JSON_URL = "https://api.github.com/search/users?q=";
 
     private EndlessRecyclerViewScrollListener scrollListener;
     private ConstraintLayout clEmptyView;
@@ -44,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private List<Data> mDataList;
-    private List<Data> mNextDataList;
+    private List<UserData> mDataList;
+    private List<UserData> mNextDataList;
+    private Context mContext;
 
     private String keyword;
 
@@ -53,8 +54,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mContext = this;
         mDataList = new ArrayList<>();
+        mNextDataList = new ArrayList<>();
 
         clEmptyView = (ConstraintLayout) findViewById(R.id.cl_empty_view);
         edtSearch = (EditText) findViewById(R.id.edt_search_user);
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         scrollListener = new EndlessRecyclerViewScrollListener((LinearLayoutManager) mLayoutManager) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+            public void onLoadMore(final int page, int totalItemsCount, RecyclerView view) {
                 loadNextDataFromApi(page);
             }
         };
@@ -98,60 +100,90 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.addOnScrollListener(scrollListener);
     }
 
-    private void sendSearchRequest(String keyword) {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                String.valueOf(NetworkUtils.buildUrl(keyword, 1)),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        JSONParse jsonParse = new JSONParse(response);
-                        jsonParse.parseJSON();
-                        mDataList = jsonParse.getUsers();
-                        mAdapter = new DataAdapter(mDataList);
-                        mRecyclerView.setAdapter(mAdapter);
-
-                        if (mDataList.size() == 0) {
-                            showEmptyView();
-                        } else {
-                            showDataView();
+    private void sendSearchRequest(final String keyword) {
+        Log.d("keyword", keyword);
+        if (isConnected()) {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                    String.valueOf(NetworkUtils.buildUrl(keyword, 1)),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            JSONParse jsonParse = new JSONParse(response);
+                            jsonParse.parseJSON();
+                            mDataList = jsonParse.getUsers();
+                            mNextDataList.clear();
+                            mAdapter = new UserDataAdapter(mDataList);
+                            mRecyclerView.setAdapter(mAdapter);
+                            if (mDataList.size() == 0) {
+                                showEmptyView();
+                            } else {
+                                showDataView();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+            );
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(stringRequest);
+        } else {
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.myMainLayout),
+                    "No Internet Connection", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("RETRY", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sendSearchRequest(keyword);
                 }
-        );
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+            });
+            snackbar.show();
+        }
     }
 
-    private void loadNextDataFromApi(int offset) {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                NetworkUtils.buildUrl(keyword, offset).toString(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        JSONParse jsonParse = new JSONParse(response);
-                        jsonParse.parseJSON();
-                        mNextDataList = jsonParse.getUsers();
-                        for (int i = 0; i < mNextDataList.size(); i++)
-                            mDataList.add(mNextDataList.get(i));
-                        mAdapter.notifyItemRangeInserted(mDataList.size() - mNextDataList.size(),
-                                mNextDataList.size());
+    private void loadNextDataFromApi(final int offset) {
+        Log.d("offset value", String.valueOf(offset));
+        if (isConnected()) {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                    NetworkUtils.buildUrl(keyword, offset + 1).toString(),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            JSONParse jsonParse = new JSONParse(response);
+                            jsonParse.parseJSON();
+                            mNextDataList = jsonParse.getUsers();
+                            if (!mNextDataList.isEmpty()) {
+                                for (int i = 0; i < mNextDataList.size(); i++)
+                                    mDataList.add(mNextDataList.get(i));
+                                mAdapter.notifyItemRangeInserted(mDataList.size() - mNextDataList.size(),
+                                        mNextDataList.size());
+                            } else {
+                                Toast.makeText(mContext, "End of result", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+            );
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(stringRequest);
+        } else {
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.myMainLayout),
+                    "No Internet Connection", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("RETRY", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loadNextDataFromApi(offset);
                 }
-        );
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+            });
+            snackbar.show();
+        }
     }
 
     private void showEmptyView() {
@@ -164,5 +196,14 @@ public class MainActivity extends AppCompatActivity {
     private void showDataView() {
         mRecyclerView.setVisibility(View.VISIBLE);
         clEmptyView.setVisibility(View.GONE);
+    }
+
+    private boolean isConnected() {
+        Log.d("cek koneksi", "masuk sini");
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.isConnected();
     }
 }
