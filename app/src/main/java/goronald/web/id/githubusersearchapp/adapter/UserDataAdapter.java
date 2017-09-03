@@ -1,24 +1,28 @@
 package goronald.web.id.githubusersearchapp.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.List;
 
+import goronald.web.id.githubusersearchapp.helper.VolleySingleton;
 import goronald.web.id.githubusersearchapp.model.UserData;
 import goronald.web.id.githubusersearchapp.R;
 
-public class UserDataAdapter extends RecyclerView.Adapter<UserDataAdapter.ViewHolder>{
+public class UserDataAdapter extends RecyclerView.Adapter<UserDataAdapter.ViewHolder> {
 
+    private Context context;
     private List<UserData> mDataList;
 
-    public UserDataAdapter(List<UserData> mDataList) {
+    public UserDataAdapter(Context context, List<UserData> mDataList) {
+        this.context = context;
         this.mDataList = mDataList;
     }
 
@@ -31,8 +35,8 @@ public class UserDataAdapter extends RecyclerView.Adapter<UserDataAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(UserDataAdapter.ViewHolder holder, int position) {
-        Glide.with(holder.ivUserPicture.getContext()).load(mDataList.get(position).getUserImgUrl())
-                .into(holder.ivUserPicture);
+        ImageLoader imageLoader = VolleySingleton.getInstance(context).getImageLoader();
+        holder.nivUserPicture.setImageUrl(mDataList.get(position).getUserImgUrl(), imageLoader);
         holder.tvUserName.setText(mDataList.get(position).getUserName());
     }
 
@@ -43,12 +47,12 @@ public class UserDataAdapter extends RecyclerView.Adapter<UserDataAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView ivUserPicture;
+        public NetworkImageView nivUserPicture;
         public TextView tvUserName;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ivUserPicture = (ImageView) itemView.findViewById(R.id.iv_user_picture);
+            nivUserPicture = (NetworkImageView) itemView.findViewById(R.id.user_picture);
             tvUserName = (TextView) itemView.findViewById(R.id.tv_user_name);
         }
     }

@@ -1,8 +1,6 @@
 package goronald.web.id.githubusersearchapp.activity;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,17 +18,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import goronald.web.id.githubusersearchapp.R;
 import goronald.web.id.githubusersearchapp.adapter.UserDataAdapter;
+import goronald.web.id.githubusersearchapp.helper.VolleySingleton;
 import goronald.web.id.githubusersearchapp.model.UserData;
 import goronald.web.id.githubusersearchapp.utility.EndlessRecyclerViewScrollListener;
 import goronald.web.id.githubusersearchapp.utility.JSONParse;
@@ -102,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendSearchRequest(final String keyword) {
         Log.d("keyword", keyword);
-        if (isConnected()) {
+        if (NetworkUtils.isConnected(mContext)) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET,
                     String.valueOf(NetworkUtils.buildUrl(keyword, 1)),
                     new Response.Listener<String>() {
@@ -112,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                             jsonParse.parseJSON();
                             mDataList = jsonParse.getUsers();
                             mNextDataList.clear();
-                            mAdapter = new UserDataAdapter(mDataList);
+                            mAdapter = new UserDataAdapter(mContext, mDataList);
                             mRecyclerView.setAdapter(mAdapter);
                             if (mDataList.size() == 0) {
                                 showEmptyView();
@@ -128,8 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
             );
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-            requestQueue.add(stringRequest);
+            VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest, "Search Request");
         } else {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.myMainLayout),
                     "No Internet Connection", Snackbar.LENGTH_INDEFINITE);
@@ -145,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadNextDataFromApi(final int offset) {
         Log.d("offset value", String.valueOf(offset));
-        if (isConnected()) {
+        if (NetworkUtils.isConnected(mContext)) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET,
                     NetworkUtils.buildUrl(keyword, offset + 1).toString(),
                     new Response.Listener<String>() {
@@ -171,8 +167,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
             );
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-            requestQueue.add(stringRequest);
+            VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest, "Load More Data");
         } else {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.myMainLayout),
                     "No Internet Connection", Snackbar.LENGTH_INDEFINITE);
@@ -196,14 +191,5 @@ public class MainActivity extends AppCompatActivity {
     private void showDataView() {
         mRecyclerView.setVisibility(View.VISIBLE);
         clEmptyView.setVisibility(View.GONE);
-    }
-
-    private boolean isConnected() {
-        Log.d("cek koneksi", "masuk sini");
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        return networkInfo != null && networkInfo.isConnected();
     }
 }
