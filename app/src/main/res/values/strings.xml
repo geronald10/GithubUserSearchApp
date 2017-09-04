@@ -5,4 +5,9 @@
     <string name="ivuserpicture_desc">ivUserPicture</string>
     <string name="empty_value_string">-</string>
     <string name="user_not_found_string">User Not Found</string>
+    <string name="generic_server_down">Oops! Your Connection Timed Out (Server temporarly down)</string>
+    <string name="no_internet">No Internet Connection</string>
+    <string name="generic_error">Access Denied!</string>
+    <string name="snackbar_dummy_bg">snackbar_dummy</string>
+    <string name="tv_reset_time">00:00</string>
 </resources>

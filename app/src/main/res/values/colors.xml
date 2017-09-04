@@ -5,4 +5,5 @@
     <color name="colorAccent">#FFC400</color>
     <color name="colorIcon">#8d8d8d</color>
     <color name="colorPrimaryText">#000000</color>
+    <color name="colorSnackbarBackground">#323232</color>
 </resources>

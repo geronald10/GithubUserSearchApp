@@ -54,7 +54,6 @@ public class JSONParse {
             e.printStackTrace();
         }
     }
-
     public List<UserData> getUsers() {
         return Users;
     }

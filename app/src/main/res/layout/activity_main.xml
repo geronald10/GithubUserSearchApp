@@ -46,15 +46,27 @@
         app:layout_constraintRight_toRightOf="@+id/iv_app_bar"
         app:layout_constraintTop_toTopOf="@+id/iv_app_bar" />
 
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_app_bar" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_github_user_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_app_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_app_bar"
+        app:layout_constraintVertical_bias="0.0" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cl_empty_view"
@@ -103,6 +115,50 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_not_found_title" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_limit_rate"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" >
+
+        <ImageView
+            android:id="@+id/iv_rate_limit"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:background="@color/colorSnackbarBackground"
+            android:contentDescription="@string/snackbar_dummy_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_rate_limit_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:textColor="@android:color/white"
+            android:text="Can't Make Request, Please wait in"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_rate_limit"
+            app:layout_constraintLeft_toLeftOf="@+id/iv_rate_limit"
+            app:layout_constraintTop_toTopOf="@+id/iv_rate_limit" />
+
+        <TextView
+            android:id="@+id/tv_rate_limit_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:text="@string/tv_reset_time"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_rate_limit"
+            app:layout_constraintRight_toRightOf="@id/iv_rate_limit"
+            app:layout_constraintTop_toTopOf="@id/iv_rate_limit" />
 
     </android.support.constraint.ConstraintLayout>
 
