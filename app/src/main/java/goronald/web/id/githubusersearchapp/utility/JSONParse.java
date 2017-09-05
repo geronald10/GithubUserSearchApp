@@ -1,7 +1,5 @@
 package goronald.web.id.githubusersearchapp.utility;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +43,6 @@ public class JSONParse {
                     data.setUserName(userNames[i]);
                     data.setUserImgUrl(imgUrls[i]);
                     Users.add(data);
-                    Log.d("data Url", String.valueOf(data.getUserImgUrl()) + data.getUserName());
                 }
             } else {
                 Users = Collections.emptyList();
@@ -54,6 +51,7 @@ public class JSONParse {
             e.printStackTrace();
         }
     }
+
     public List<UserData> getUsers() {
         return Users;
     }

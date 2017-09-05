@@ -49,12 +49,6 @@ public class VolleySingleton {
         getRequestQueue().add(request);
     }
 
-    public <T> void addToRequestQueue(Request<T> request) {
-        // set the default tag if tag is empty
-        request.setTag(TAG);
-        getRequestQueue().add(request);
-    }
-
     public void cancelPendingRequests(Object tag) {
         if (requestQueue != null) {
             requestQueue.cancelAll(tag);

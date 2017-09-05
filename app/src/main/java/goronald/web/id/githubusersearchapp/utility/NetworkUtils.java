@@ -30,7 +30,7 @@ public class NetworkUtils {
     }
 
     public static boolean isConnected(Context context) {
-        Log.d("cek koneksi", "masuk sini");
+        // Log.d("cek koneksi", "masuk sini");
         ConnectivityManager connMgr = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

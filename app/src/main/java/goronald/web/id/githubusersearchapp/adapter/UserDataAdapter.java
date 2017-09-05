@@ -40,11 +40,6 @@ public class UserDataAdapter extends RecyclerView.Adapter<UserDataAdapter.ViewHo
         holder.tvUserName.setText(mDataList.get(position).getUserName());
     }
 
-    @Override
-    public int getItemCount() {
-        return mDataList.size();
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public NetworkImageView nivUserPicture;
@@ -55,5 +50,10 @@ public class UserDataAdapter extends RecyclerView.Adapter<UserDataAdapter.ViewHo
             nivUserPicture = (NetworkImageView) itemView.findViewById(R.id.user_picture);
             tvUserName = (TextView) itemView.findViewById(R.id.tv_user_name);
         }
+    }
+
+    @Override
+    public int getItemCount() {
+        return mDataList.size();
     }
 }

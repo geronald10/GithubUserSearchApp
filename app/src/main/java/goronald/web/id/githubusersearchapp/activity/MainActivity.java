@@ -45,8 +45,6 @@ import goronald.web.id.githubusersearchapp.utility.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-
     private EndlessRecyclerViewScrollListener scrollListener;
     private ConstraintLayout clEmptyView;
     private ConstraintLayout clLimitRateView;
@@ -114,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 loadNextDataFromApi(page);
             }
         };
-
         mRecyclerView.addOnScrollListener(scrollListener);
     }
 
@@ -129,10 +126,15 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse(String response) {
                             JSONParse jsonParse = new JSONParse(response);
                             jsonParse.parseJSON();
-                            mDataList = jsonParse.getUsers();
+
+                            mDataList.clear();
                             mNextDataList.clear();
+                            scrollListener.resetState();
+
+                            mDataList = jsonParse.getUsers();
                             mAdapter = new UserDataAdapter(mContext, mDataList);
                             mRecyclerView.setAdapter(mAdapter);
+
                             if (mDataList.size() == 0) {
                                 showEmptyView();
                             } else {
@@ -248,22 +250,24 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("networkResponseHeader", String.valueOf(new JSONObject(response.headers)));
                         JSONObject responseHeader = new JSONObject(response.headers);
                         long dateTimeInMillis = DateTimeUtils
-                                .covertFullDateToMillis(responseHeader.getString("Date"));
+                                .convertFullDateToMillis(responseHeader.getString("Date"));
                         Log.d("beginTime", String.valueOf(dateTimeInMillis));
                         long rateLimitResetTimeInMillis = responseHeader.getLong("X-RateLimit-Reset") * 1000;
                         Log.d("resetDate", String.valueOf(rateLimitResetTimeInMillis));
 
                         tvLimitTime = (TextView) findViewById(R.id.tv_rate_limit_time);
-                        new CountDownTimer(rateLimitResetTimeInMillis-dateTimeInMillis, 1000) {
+                        new CountDownTimer(rateLimitResetTimeInMillis - dateTimeInMillis, 1000) {
                             @Override
                             public void onTick(long millisUntilFinished) {
                                 clLimitRateView.setVisibility(View.VISIBLE);
-                                tvLimitTime.setText(String.valueOf(millisUntilFinished / 1000));
+                                tvLimitTime.setText(DateTimeUtils.convertMillisToTimeFormat(millisUntilFinished));
+                                edtSearch.setEnabled(false);
                             }
 
                             @Override
                             public void onFinish() {
                                 clLimitRateView.setVisibility(View.GONE);
+                                edtSearch.setEnabled(true);
                             }
                         }.start();
                         break;
