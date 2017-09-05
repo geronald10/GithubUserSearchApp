@@ -109,8 +109,10 @@ public class MainActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener((LinearLayoutManager) mLayoutManager) {
             @Override
             public void onLoadMore(final int page, int totalItemsCount, RecyclerView view) {
+                Log.d("fungsiOnLoadMore", "call");
                 loadNextDataFromApi(page);
             }
+
         };
         mRecyclerView.addOnScrollListener(scrollListener);
     }
@@ -268,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onFinish() {
                                 clLimitRateView.setVisibility(View.GONE);
                                 edtSearch.setEnabled(true);
+
                             }
                         }.start();
                         break;
